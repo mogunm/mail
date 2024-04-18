@@ -112,7 +112,7 @@ function view_email(emailId) {
         <div><strong>To:</strong> ${data.recipients}</div>
         <div><strong>Subject:</strong> ${data.subject}</div>
         <div><strong>Timestamp:</strong> ${data.timestamp}</div>
-        <div><input type="submit" value="reply" class="btn btn-sm btn-outline-primary"</div>
+        <div id="button"></div>
      </div>
      <div class="border-bottom mt-1">
      </div>
@@ -143,6 +143,26 @@ function view_email(emailId) {
       .then(() => {load_mailbox('archive')});
     };
     document.querySelector('.border-bottom').append(button);
+
+    // allow for user to reply to emails 
+    const btn_reply = document.createElement('button');
+    btn_reply.className = "btn btn-sm btn-outline-primary";
+    btn_reply.innerHTML = "reply";
+    btn_reply.onclick = () => {
+      // get composition view 
+      compose_email();
+
+      // autopopulate the email values 
+      document.querySelector('#compose-recipients').value = data.sender;
+      let subject = data.subject;
+      if(subject.split(' ',1)[0] != "Re:"){
+        subject = "Re: " + data.subject;
+      };
+      document.querySelector('#compose-subject').value = subject;
+      document.querySelector('#compose-body').value = `On ${data.timestamp} ${data.sender} wrote:"${data.body}"/n`;
+
+    };
+    document.querySelector('#button').append(btn_reply);
 
   });
 

@@ -114,7 +114,7 @@ function view_email(emailId) {
         <div><strong>Timestamp:</strong> ${data.timestamp}</div>
         <div><input type="submit" value="reply" class="btn btn-sm btn-outline-primary"</div>
      </div>
-     <div class="border-bottom mt-3">
+     <div class="border-bottom mt-1">
      </div>
      <div class="mt-3">
         <p>${data.body}</p>
@@ -122,11 +122,30 @@ function view_email(emailId) {
     `
 
     // mark the email as read 
-    fetch(`/emails/${emailId}`, {
+    fetch(`/emails/${data.id}`, {
       method: 'PUT',
       body: JSON.stringify({
           read: true
       })
     });
+
+    //allow for user to archive emails 
+    const button = document.createElement('button');
+    button.className = data.archived ? "btn btn-sm btn-outline-danger mb-2" : "btn btn-sm btn-outline-success mb-2";
+    button.innerHTML = data.archived ? "unarchive" : "archive";
+    button.onclick = () => {
+      fetch(`/emails/${data.id}`, {
+        method: 'PUT',
+        body: JSON.stringify({
+            archived: !data.archived
+        })
+      })
+      .then(() => {load_mailbox('archive')});
+    };
+    document.querySelector('.border-bottom').append(button);
+
   });
+
+  
+
 }
